@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+
+    "target": "es2015",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "jsx": "react",
+    "sourceMap": true,
+
+    "strict": true,
+
+    "types": [
+      "node",
+      "webpack",
+      "webpack-env",
+      "react",
+      "immutable",
+      "jest"
+    ],
+    "noImplicitAny": false,
+    "allowUnreachableCode": false,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "pretty": true,
+    "strictNullChecks": true,
+    "alwaysStrict": true,
+    "experimentalDecorators": true,
+    "noImplicitThis": false,
+    "skipLibCheck": true,
+
+    "paths": {
+      "Src/*": ["*"],
+      "App/*": ["App/*"],
+      "Components/*": ["App/Components/*"],
+      "Enums/*": ["App/Enums/*"],
+      "Pages/*": ["App/Pages/*"],
+      "API/*": ["App/Api/*"]
+    },
+
+    "typeRoots": ["node_modules/@types", "../definitions"]
+  },
+  "exclude": ["node_modules", "**/node_modules/*", "dist", "bin", "public"],
+  "include": ["src/**/*", "definitions/**/*"]
+}
