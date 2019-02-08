@@ -1,7 +1,5 @@
-import React from "react";
-import { PixiComponent } from "Src/App/Components/Pixi/PixiComponent";
-
-const image = require("Assets/tank.png");
+import * as React from "react";
+import Background from "Src/App/Components/CanvasElements/Background";
 
 export default class Homepage extends React.Component {
   render() {
@@ -9,9 +7,9 @@ export default class Homepage extends React.Component {
     const height = 500;
 
     return (
-      <>
-        <PixiComponent width={width} height={height} />
-      </>
+      <div style={{ border: "5x solid #CCC" }}>
+        <Background width={width} height={height} />
+      </div>
     );
   }
 }
