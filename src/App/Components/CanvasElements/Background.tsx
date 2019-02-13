@@ -4,8 +4,8 @@ import { Stage, Layer } from "react-konva";
 import Star from "./Star";
 
 interface IProps {
-  height: number;
-  width: number;
+  stageWidth: number;
+  stageHeight: number;
 }
 
 export default class Background extends React.Component<IProps> {
@@ -32,20 +32,17 @@ export default class Background extends React.Component<IProps> {
   };
 
   public render() {
-    const { height, width } = this.props;
+    const { stageWidth, stageHeight } = this.props;
 
     return (
-      <Stage width={width} height={height}>
+      <Stage width={stageWidth} height={stageHeight}>
         <Layer>
-          {[...Array(10)].map(i => (
-            <Star
-              key={i}
-              height={height}
-              width={width}
-              handleDragStart={this.handleDragStart}
-              handleDragEnd={this.handleDragEnd}
-            />
-          ))}
+          <Star
+            width={stageWidth}
+            height={stageHeight}
+            handleDragStart={this.handleDragStart}
+            handleDragEnd={this.handleDragEnd}
+          />
         </Layer>
       </Stage>
     );
