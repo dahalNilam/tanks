@@ -16,7 +16,6 @@
       "webpack",
       "webpack-env",
       "react",
-      "immutable",
       "jest"
     ],
     "noImplicitAny": false,
