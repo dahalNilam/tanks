@@ -2,6 +2,7 @@ import React from "react";
 import Konva from "konva";
 import { Stage, Layer } from "react-konva";
 import Star from "./Star";
+import URLImage from "./URLImage";
 
 interface IProps {
   stageWidth: number;
@@ -42,6 +43,13 @@ export default class Background extends React.Component<IProps> {
             height={stageHeight}
             handleDragStart={this.handleDragStart}
             handleDragEnd={this.handleDragEnd}
+          />
+          <URLImage
+            src={require("Src/Assets/redtank.png")}
+            height={50}
+            width={50}
+            positionX={250}
+            positionY={50}
           />
         </Layer>
       </Stage>
