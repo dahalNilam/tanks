@@ -1,5 +1,7 @@
 import * as React from "react";
-import Background from "Src/App/Components/CanvasElements/Background";
+import { Stage, Layer } from "react-konva";
+import Hero from "Src/App/Components/Hero";
+import Villian from "Src/App/Components/Villian";
 
 interface IState {
   stageWidth: number;
@@ -52,7 +54,12 @@ export default class Homepage extends React.Component {
         }}
         ref={this.backGroundRef}
       >
-        <Background stageWidth={stageWidth} stageHeight={stageHeight} />;
+        <Stage width={stageWidth} height={stageHeight}>
+          <Layer>
+            <Hero stageWidth={stageWidth} stageHeight={stageHeight} />
+            <Villian stageWidth={stageWidth} stageHeight={stageHeight} />
+          </Layer>
+        </Stage>
       </div>
     );
   }

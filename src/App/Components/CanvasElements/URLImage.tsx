@@ -15,11 +15,11 @@ interface IState {
 
 export default class URLImage extends React.Component<IProps, IState> {
   public readonly state = {
-    image: new window.Image()
+    image: new (window as any).Image()
   };
 
   public componentDidMount() {
-    const image = new window.Image();
+    const image = new (window as any).Image();
     image.src = this.props.src;
 
     image.onload = () => {
