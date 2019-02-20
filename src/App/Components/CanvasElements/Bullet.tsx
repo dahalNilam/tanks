@@ -1,4 +1,5 @@
 import React from "react";
+import Konva from "konva";
 import { Circle } from "react-konva";
 
 interface IProps {
@@ -12,7 +13,8 @@ interface IState {
 }
 
 export default class Bullet extends React.Component<IProps, IState> {
-  private interval;
+  private circle;
+  private animation;
 
   public readonly state = {
     currentPositionX: 0,
@@ -21,29 +23,46 @@ export default class Bullet extends React.Component<IProps, IState> {
 
   public componentDidMount() {
     const { startPositionX, startPositionY } = this.props;
+
+    this.animation = new Konva.Animation((frame: { time: number }) => {
+      const positionY = startPositionY - frame.time / 5;
+
+      if (positionY <= 60) {
+        this.animation.stop();
+      }
+
+      this.circle.setY(positionY);
+    }, this.circle.getLayer());
+
     this.setState({
       currentPositionX: startPositionX,
       currentPositionY: startPositionY
     });
 
-    this.interval = setInterval(() => this.tick(), 10);
+    this.startAnimation();
   }
 
   public componentWillUnmount() {
-    clearInterval(this.interval);
+    this.animation.stop();
   }
 
-  private tick = () => {
-    this.setState(prevState => ({
-      currentPositionY: prevState.currentPositionY - 5
-    }));
+  private startAnimation = () => {
+    this.animation.start();
   };
 
   public render() {
     const { currentPositionX, currentPositionY } = this.state;
 
     return (
-      <Circle x={currentPositionX} y={currentPositionY} radius={5} fill="red" />
+      <Circle
+        ref={node => {
+          this.circle = node;
+        }}
+        x={currentPositionX}
+        y={currentPositionY}
+        radius={5}
+        fill="red"
+      />
     );
   }
 }
