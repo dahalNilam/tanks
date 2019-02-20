@@ -2,10 +2,13 @@ import * as React from "react";
 import { Stage, Layer } from "react-konva";
 import Hero from "Src/App/Components/Hero";
 import Villian from "Src/App/Components/Villian";
+import Bullet from "Src/App/Components/CanvasElements/Bullet";
+import { IBullet } from "Src/App/Interfaces/IBullet";
 
 interface IState {
   stageWidth: number;
   stageHeight: number;
+  bullets: IBullet[];
 }
 
 export default class Homepage extends React.Component {
@@ -22,7 +25,8 @@ export default class Homepage extends React.Component {
 
   public readonly state: IState = {
     stageWidth: 500,
-    stageHeight: 500
+    stageHeight: 500,
+    bullets: []
   };
 
   private checkSize = () => {
@@ -41,8 +45,21 @@ export default class Homepage extends React.Component {
     });
   };
 
+  private handleFire = (positionX: number, positionY: number) => {
+    const newBullet: IBullet = {
+      initialPositionX: positionX,
+      initialPositionY: positionY
+    };
+
+    const bullets = [...this.state.bullets, newBullet];
+
+    this.setState({
+      bullets
+    });
+  };
+
   public render() {
-    const { stageWidth, stageHeight } = this.state;
+    const { stageWidth, stageHeight, bullets } = this.state;
 
     return (
       <div
@@ -56,8 +73,21 @@ export default class Homepage extends React.Component {
       >
         <Stage width={stageWidth} height={stageHeight}>
           <Layer>
-            <Hero stageWidth={stageWidth} stageHeight={stageHeight} />
+            <Hero
+              stageWidth={stageWidth}
+              stageHeight={stageHeight}
+              fire={this.handleFire}
+            />
             <Villian stageWidth={stageWidth} stageHeight={stageHeight} />
+            {bullets &&
+              bullets.length > 0 &&
+              bullets.map((bullet, i) => (
+                <Bullet
+                  key={i}
+                  startPositionX={bullet.initialPositionX}
+                  startPositionY={bullet.initialPositionY}
+                />
+              ))}
           </Layer>
         </Stage>
       </div>
