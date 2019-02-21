@@ -3,12 +3,13 @@ import { Stage, Layer } from "react-konva";
 import Hero from "Src/App/Components/Hero";
 import Villian from "Src/App/Components/Villian";
 import Bullet from "Src/App/Components/CanvasElements/Bullet";
-import { IBullet } from "Src/App/Interfaces/IBullet";
+import { IPosition } from "Src/App/Interfaces/IPosition";
+import URLImage from "Src/App/Components/CanvasElements/URLImage";
 
 interface IState {
   stageWidth: number;
   stageHeight: number;
-  bullets: IBullet[];
+  bullets: IPosition[];
 }
 
 export default class Homepage extends React.Component {
@@ -46,9 +47,9 @@ export default class Homepage extends React.Component {
   };
 
   private handleFire = (positionX: number, positionY: number) => {
-    const newBullet: IBullet = {
-      initialPositionX: positionX,
-      initialPositionY: positionY
+    const newBullet: IPosition = {
+      positionX,
+      positionY
     };
 
     const bullets = [...this.state.bullets, newBullet];
@@ -58,8 +59,15 @@ export default class Homepage extends React.Component {
     });
   };
 
+  private checkIfHit = (bulletPosition: IPosition) => {};
+
+  private handleUpdateVillianPosition = (villian: IPosition) => {};
+
   public render() {
     const { stageWidth, stageHeight, bullets } = this.state;
+
+    const villianStartPositionX = stageWidth / 2 - 25;
+    const villianStartPositionY = 10;
 
     return (
       <div
@@ -78,14 +86,21 @@ export default class Homepage extends React.Component {
               stageHeight={stageHeight}
               fire={this.handleFire}
             />
-            <Villian stageWidth={stageWidth} stageHeight={stageHeight} />
+
+            <Villian
+              startPositionX={villianStartPositionX}
+              startPositionY={villianStartPositionY}
+              updateVillianPosition={this.handleUpdateVillianPosition}
+            />
+
             {bullets &&
               bullets.length > 0 &&
               bullets.map((bullet, i) => (
                 <Bullet
                   key={i}
-                  startPositionX={bullet.initialPositionX}
-                  startPositionY={bullet.initialPositionY}
+                  startPositionX={bullet.positionX}
+                  startPositionY={bullet.positionY}
+                  updateBulletPosition={this.checkIfHit}
                 />
               ))}
           </Layer>

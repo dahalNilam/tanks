@@ -1,10 +1,12 @@
 import React from "react";
 import Konva from "konva";
 import { Circle } from "react-konva";
+import { IPosition } from "Src/App/Interfaces/IPosition";
 
 interface IProps {
   startPositionX: number;
   startPositionY: number;
+  updateBulletPosition: (position: IPosition) => void;
 }
 
 interface IState {
@@ -26,6 +28,13 @@ export default class Bullet extends React.Component<IProps, IState> {
 
     this.animation = new Konva.Animation((frame: { time: number }) => {
       const positionY = startPositionY - frame.time / 5;
+
+      const currentPosition: IPosition = {
+        positionX: startPositionX,
+        positionY
+      };
+
+      this.props.updateBulletPosition(currentPosition);
 
       if (positionY <= 60) {
         this.animation.stop();
