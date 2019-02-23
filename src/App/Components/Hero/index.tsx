@@ -1,18 +1,16 @@
 import React from "react";
 import URLImage from "../CanvasElements/URLImage";
-
-interface IState {
-  positionX: number;
-  positionY: number;
-}
+import { IHero } from "Src/App/Interfaces/IHero";
 
 interface IProps {
+  hero: IHero;
   stageWidth: number;
   stageHeight: number;
-  fire: (positionX: number, positionY: number) => void;
+  handleFire: () => void;
+  handleMove: (distance: number) => void;
 }
 
-export default class Hero extends React.Component<IProps, IState> {
+export default class Hero extends React.Component<IProps> {
   public readonly state = {
     positionX: 0,
     positionY: 0
@@ -20,31 +18,11 @@ export default class Hero extends React.Component<IProps, IState> {
 
   public componentDidMount() {
     window.addEventListener("keydown", this.handleKeyDown);
-    this.setPosition();
   }
 
   public componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
   }
-
-  public componentDidUpdate(nextProps: IProps) {
-    if (
-      nextProps.stageWidth !== this.props.stageWidth &&
-      nextProps.stageHeight !== this.props.stageHeight
-    ) {
-      this.setPosition();
-    }
-  }
-
-  private setPosition = () => {
-    const positionX = this.props.stageWidth / 2 - 25;
-    const positionY = this.props.stageHeight - 60;
-
-    this.setState({
-      positionX,
-      positionY
-    });
-  };
 
   private handleKeyDown = (event: KeyboardEvent) => {
     if (!event || !event.key) {
@@ -55,15 +33,15 @@ export default class Hero extends React.Component<IProps, IState> {
 
     switch (key) {
       case "ArrowRight":
-        this.move(10);
+        this.props.handleMove(10);
         break;
 
       case "ArrowLeft":
-        this.move(-10);
+        this.props.handleMove(-10);
         break;
 
       case "Space":
-        this.fire();
+        this.props.handleFire();
         break;
 
       default:
@@ -83,16 +61,9 @@ export default class Hero extends React.Component<IProps, IState> {
     });
   };
 
-  private fire = () => {
-    const { positionX, positionY } = this.state;
-    const bulletInitialPositionX = positionX + 26;
-    const bulletInitialPositionY = positionY - 10;
-
-    this.props.fire(bulletInitialPositionX, bulletInitialPositionY);
-  };
-
   public render() {
-    const { positionX, positionY } = this.state;
+    const { hero } = this.props;
+    const { positionX, positionY } = hero;
 
     return (
       <URLImage

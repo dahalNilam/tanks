@@ -4,33 +4,45 @@ import Hero from "Src/App/Components/Hero";
 import Villian from "Src/App/Components/Villian";
 import Bullet from "Src/App/Components/CanvasElements/Bullet";
 import { IPosition } from "Src/App/Interfaces/IPosition";
-import URLImage from "Src/App/Components/CanvasElements/URLImage";
+import { IHero } from "Src/App/Interfaces/IHero";
 
 interface IState {
   stageWidth: number;
   stageHeight: number;
   bullets: IPosition[];
+  villians: any;
+  hero: IHero;
 }
 
 export default class Homepage extends React.Component {
   private backGroundRef = React.createRef<HTMLDivElement>();
 
   public componentDidMount() {
-    this.checkSize();
-    window.addEventListener("resize", this.checkSize);
+    this.initializeGame();
+    window.addEventListener("resize", this.initializeGame);
   }
 
   public componentWillUnmount() {
-    window.removeEventListener("resize", this.checkSize);
+    window.removeEventListener("resize", this.initializeGame);
   }
 
   public readonly state: IState = {
     stageWidth: 500,
     stageHeight: 500,
-    bullets: []
+    bullets: [],
+    hero: {
+      Id: "hero",
+      positionX: 0,
+      positionY: 0
+    },
+    villians: []
   };
 
-  private checkSize = () => {
+  private initializeGame = () => {
+    this.initializeStage();
+  };
+
+  private initializeStage = () => {
     const backGroundNode = this.backGroundRef.current;
 
     if (!backGroundNode) {
@@ -40,16 +52,45 @@ export default class Homepage extends React.Component {
     const stageWidth = backGroundNode.offsetWidth;
     const stageHeight = backGroundNode.offsetHeight;
 
+    this.setState(
+      {
+        stageWidth,
+        stageHeight
+      },
+      () => {
+        this.initializeHero();
+      }
+    );
+  };
+
+  private initializeHero = () => {
+    const { stageWidth, stageHeight } = this.state;
+    const positionX = stageWidth / 2 - 25;
+    const positionY = stageHeight - 60;
+
+    const hero: IHero = {
+      positionY,
+      positionX,
+      Id: "hero"
+    };
+
     this.setState({
-      stageWidth,
-      stageHeight
+      hero
     });
   };
 
-  private handleFire = (positionX: number, positionY: number) => {
+  private checkIfHit = (bulletPosition: IPosition) => {};
+
+  private handleUpdateVillianPosition = (villian: IPosition) => {};
+
+  private handleFire = () => {
+    const { positionX, positionY } = this.state.hero;
+    const bulletInitialPositionX = positionX + 26;
+    const bulletInitialPositionY = positionY - 10;
+
     const newBullet: IPosition = {
-      positionX,
-      positionY
+      positionX: bulletInitialPositionX,
+      positionY: bulletInitialPositionY
     };
 
     const bullets = [...this.state.bullets, newBullet];
@@ -59,12 +100,25 @@ export default class Homepage extends React.Component {
     });
   };
 
-  private checkIfHit = (bulletPosition: IPosition) => {};
+  private handleMoveHero = (distance: number) => {
+    const { hero, stageWidth } = this.state;
+    const newPositionX = hero.positionX + distance;
 
-  private handleUpdateVillianPosition = (villian: IPosition) => {};
+    // Don't move when the position gets out of range
+    if (newPositionX >= stageWidth - 50 || newPositionX <= 0) {
+      return;
+    }
+
+    this.setState({
+      hero: {
+        ...this.state.hero,
+        positionX: newPositionX
+      }
+    });
+  };
 
   public render() {
-    const { stageWidth, stageHeight, bullets } = this.state;
+    const { stageWidth, stageHeight, villians, hero, bullets } = this.state;
 
     const villianStartPositionX = stageWidth / 2 - 25;
     const villianStartPositionY = 10;
@@ -81,11 +135,15 @@ export default class Homepage extends React.Component {
       >
         <Stage width={stageWidth} height={stageHeight}>
           <Layer>
-            <Hero
-              stageWidth={stageWidth}
-              stageHeight={stageHeight}
-              fire={this.handleFire}
-            />
+            {hero && (
+              <Hero
+                hero={hero}
+                stageWidth={stageWidth}
+                stageHeight={stageHeight}
+                handleFire={this.handleFire}
+                handleMove={this.handleMoveHero}
+              />
+            )}
 
             <Villian
               startPositionX={villianStartPositionX}
