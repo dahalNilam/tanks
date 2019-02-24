@@ -1,16 +1,17 @@
 import * as React from "react";
 import { Stage, Layer } from "react-konva";
-import Hero from "Src/App/Components/Hero";
-import Villian from "Src/App/Components/Villian";
+import Hero from "Src/App/Components/Hero/Hero";
+import Villian from "Src/App/Components/Villian/Villian";
 import Bullet from "Src/App/Components/CanvasElements/Bullet";
 import { IPosition } from "Src/App/Interfaces/IPosition";
 import { IHero } from "Src/App/Interfaces/IHero";
+import { IVillian } from "Src/App/Interfaces/IVillian";
 
 interface IState {
   stageWidth: number;
   stageHeight: number;
   bullets: IPosition[];
-  villians: any;
+  villians: IVillian[];
   hero: IHero;
 }
 
@@ -18,8 +19,8 @@ export default class Homepage extends React.Component {
   private backGroundRef = React.createRef<HTMLDivElement>();
 
   public componentDidMount() {
-    this.initializeGame();
     window.addEventListener("resize", this.initializeGame);
+    this.initializeGame();
   }
 
   public componentWillUnmount() {
@@ -59,6 +60,7 @@ export default class Homepage extends React.Component {
       },
       () => {
         this.initializeHero();
+        this.initializeVillians();
       }
     );
   };
@@ -76,6 +78,25 @@ export default class Homepage extends React.Component {
 
     this.setState({
       hero
+    });
+  };
+
+  private initializeVillians = () => {
+    const { stageWidth } = this.state;
+
+    const positionX = stageWidth / 2 - 25;
+    const positionY = 10;
+
+    const villian: IVillian = {
+      positionY,
+      positionX,
+      Id: "villian1"
+    };
+
+    const villians: IVillian[] = [villian];
+
+    this.setState({
+      villians
     });
   };
 
@@ -120,9 +141,6 @@ export default class Homepage extends React.Component {
   public render() {
     const { stageWidth, stageHeight, villians, hero, bullets } = this.state;
 
-    const villianStartPositionX = stageWidth / 2 - 25;
-    const villianStartPositionY = 10;
-
     return (
       <div
         style={{
@@ -144,12 +162,15 @@ export default class Homepage extends React.Component {
                 handleMove={this.handleMoveHero}
               />
             )}
-
-            <Villian
-              startPositionX={villianStartPositionX}
-              startPositionY={villianStartPositionY}
-              updateVillianPosition={this.handleUpdateVillianPosition}
-            />
+            {villians &&
+              villians.length > 0 &&
+              villians.map(villian => (
+                <Villian
+                  key={villian.Id}
+                  villian={villian}
+                  updateVillianPosition={this.handleUpdateVillianPosition}
+                />
+              ))}
 
             {bullets &&
               bullets.length > 0 &&

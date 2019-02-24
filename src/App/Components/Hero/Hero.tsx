@@ -48,19 +48,6 @@ export default class Hero extends React.Component<IProps> {
     }
   };
 
-  private move = (value: number) => {
-    const positionX = this.state.positionX + value;
-
-    // Don't move when the position gets out of range
-    if (positionX >= this.props.stageWidth - 50 || positionX <= 0) {
-      return;
-    }
-
-    this.setState({
-      positionX
-    });
-  };
-
   public render() {
     const { hero } = this.props;
     const { positionX, positionY } = hero;
