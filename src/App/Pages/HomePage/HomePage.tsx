@@ -3,14 +3,15 @@ import { Stage, Layer } from "react-konva";
 import Hero from "Src/App/Components/Hero/Hero";
 import Villian from "Src/App/Components/Villian/Villian";
 import Bullet from "Src/App/Components/CanvasElements/Bullet";
-import { IPosition } from "Src/App/Interfaces/IPosition";
 import { IHero } from "Src/App/Interfaces/IHero";
 import { IVillian } from "Src/App/Interfaces/IVillian";
+import getUniqueId from "Src/App/Utilities/Utilities";
+import { IBullet } from "Src/App/Interfaces/IBullet";
 
 interface IState {
   stageWidth: number;
   stageHeight: number;
-  bullets: IPosition[];
+  bullets: IBullet[];
   villians: IVillian[];
   hero: IHero;
 }
@@ -73,7 +74,7 @@ export default class Homepage extends React.Component {
     const hero: IHero = {
       positionY,
       positionX,
-      Id: "hero"
+      Id: getUniqueId("hero")
     };
 
     this.setState({
@@ -90,7 +91,7 @@ export default class Homepage extends React.Component {
     const villian: IVillian = {
       positionY,
       positionX,
-      Id: "villian1"
+      Id: getUniqueId("villian")
     };
 
     const villians: IVillian[] = [villian];
@@ -100,16 +101,32 @@ export default class Homepage extends React.Component {
     });
   };
 
-  private checkIfHit = (bulletPosition: IPosition) => {};
+  private updateBulletPosition = (bullet: IBullet) => {
+    if (bullet.positionY <= 60) {
+      const newBullets = this.state.bullets.filter(p => p.Id === bullet.Id);
 
-  private handleUpdateVillianPosition = (villian: IPosition) => {};
+      this.setState({
+        bullets: newBullets
+      });
+    }
+  };
+
+  private handleRemoveBulletById = (id: string) => {
+    const newBullets = this.state.bullets.filter(p => p.Id !== id);
+    this.setState({
+      bullets: newBullets
+    });
+  };
+
+  private handleUpdateVillianPosition = (villian: IBullet) => {};
 
   private handleFire = () => {
     const { positionX, positionY } = this.state.hero;
     const bulletInitialPositionX = positionX + 26;
     const bulletInitialPositionY = positionY - 10;
 
-    const newBullet: IPosition = {
+    const newBullet: IBullet = {
+      Id: getUniqueId("bullet"),
       positionX: bulletInitialPositionX,
       positionY: bulletInitialPositionY
     };
@@ -155,6 +172,7 @@ export default class Homepage extends React.Component {
           <Layer>
             {hero && (
               <Hero
+                key={hero.Id}
                 hero={hero}
                 stageWidth={stageWidth}
                 stageHeight={stageHeight}
@@ -174,12 +192,11 @@ export default class Homepage extends React.Component {
 
             {bullets &&
               bullets.length > 0 &&
-              bullets.map((bullet, i) => (
+              bullets.map(bullet => (
                 <Bullet
-                  key={i}
-                  startPositionX={bullet.positionX}
-                  startPositionY={bullet.positionY}
-                  updateBulletPosition={this.checkIfHit}
+                  key={bullet.Id}
+                  bullet={bullet}
+                  removeBulletById={this.handleRemoveBulletById}
                 />
               ))}
           </Layer>

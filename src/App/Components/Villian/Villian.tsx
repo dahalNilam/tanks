@@ -1,11 +1,10 @@
 import React from "react";
 import URLImage from "../CanvasElements/URLImage";
-import { IPosition } from "Src/App/Interfaces/IPosition";
 import { IVillian } from "Src/App/Interfaces/IVillian";
 
 interface IProps {
   villian: IVillian;
-  updateVillianPosition: (position: IPosition) => void;
+  updateVillianPosition: (villain: IVillian) => void;
 }
 
 export default class Villian extends React.Component<IProps> {
