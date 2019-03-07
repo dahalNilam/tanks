@@ -1,51 +1,85 @@
 import React from "react";
 import URLImage from "../CanvasElements/URLImage";
 import { IHero } from "Src/App/Interfaces/IHero";
+import { Direction } from "Src/App/Enums/Direction";
 
 interface IProps {
   hero: IHero;
-  stageWidth: number;
-  stageHeight: number;
-  handleFire: () => void;
-  handleMove: (distance: number) => void;
+  updateHero: (hero: IHero) => void;
 }
 
 export default class Hero extends React.Component<IProps> {
-  public readonly state = {
-    positionX: 0,
-    positionY: 0
-  };
-
   public componentDidMount() {
     window.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("keyup", this.handleKeyUp);
   }
 
   public componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener("keyup", this.handleKeyUp);
   }
 
   private handleKeyDown = (event: KeyboardEvent) => {
+    event.preventDefault();
     if (!event || !event.key) {
       return;
     }
 
     const key = event.code;
+    const { hero } = this.props;
+    let { movingDirection, isFiring } = hero;
 
     switch (key) {
       case "ArrowRight":
-        this.props.handleMove(10);
+        movingDirection = Direction.Right;
         break;
 
       case "ArrowLeft":
-        this.props.handleMove(-10);
+        movingDirection = Direction.Left;
         break;
 
       case "Space":
-        this.props.handleFire();
+        isFiring = true;
         break;
 
       default:
     }
+
+    this.props.updateHero({
+      ...this.props.hero,
+      movingDirection,
+      isFiring
+    });
+  };
+
+  private handleKeyUp = (event: KeyboardEvent) => {
+    event.preventDefault();
+    if (!event || !event.key) {
+      return;
+    }
+
+    const key = event.code;
+    const { hero } = this.props;
+    let { movingDirection, isFiring } = hero;
+
+    switch (key) {
+      case "ArrowRight":
+      case "ArrowLeft":
+        movingDirection = Direction.None;
+        break;
+
+      case "Space":
+        isFiring = false;
+        break;
+
+      default:
+    }
+
+    this.props.updateHero({
+      ...this.props.hero,
+      movingDirection,
+      isFiring
+    });
   };
 
   public render() {

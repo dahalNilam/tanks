@@ -1,12 +1,13 @@
 import * as React from "react";
 import { Stage, Layer } from "react-konva";
-import Hero from "Src/App/Components/Hero/Hero";
 import Villian from "Src/App/Components/Villian/Villian";
 import Bullet from "Src/App/Components/CanvasElements/Bullet";
 import { IHero } from "Src/App/Interfaces/IHero";
 import { IVillian } from "Src/App/Interfaces/IVillian";
 import getUniqueId from "Src/App/Utilities/Utilities";
 import { IBullet } from "Src/App/Interfaces/IBullet";
+import Hero from "Src/App/Components/Hero/Hero";
+import { Direction } from "Src/App/Enums/Direction";
 
 interface IState {
   stageWidth: number;
@@ -35,7 +36,8 @@ export default class Homepage extends React.Component {
     hero: {
       Id: "hero",
       positionX: 0,
-      positionY: 0
+      positionY: 0,
+      movingDirection: Direction.None
     },
     villians: []
   };
@@ -72,9 +74,10 @@ export default class Homepage extends React.Component {
     const positionY = stageHeight - 60;
 
     const hero: IHero = {
+      Id: getUniqueId("hero"),
       positionY,
       positionX,
-      Id: getUniqueId("hero")
+      movingDirection: Direction.None
     };
 
     this.setState({
@@ -99,16 +102,6 @@ export default class Homepage extends React.Component {
     this.setState({
       villians
     });
-  };
-
-  private updateBulletPosition = (bullet: IBullet) => {
-    if (bullet.positionY <= 60) {
-      const newBullets = this.state.bullets.filter(p => p.Id === bullet.Id);
-
-      this.setState({
-        bullets: newBullets
-      });
-    }
   };
 
   private handleRemoveBulletById = (id: string) => {
@@ -138,19 +131,34 @@ export default class Homepage extends React.Component {
     });
   };
 
-  private handleMoveHero = (distance: number) => {
-    const { hero, stageWidth } = this.state;
-    const newPositionX = hero.positionX + distance;
+  private handleUpdateHero = (hero: IHero) => {
+    // Handle Hero Move
+    const { stageWidth } = this.state;
+
+    let positionX = hero.positionX;
+    if (hero.movingDirection === Direction.Right) {
+      positionX += 10;
+    } else if (hero.movingDirection === Direction.Left) {
+      positionX -= 10;
+    }
 
     // Don't move when the position gets out of range
-    if (newPositionX >= stageWidth - 50 || newPositionX <= 0) {
-      return;
+    if (positionX >= stageWidth - 50) {
+      positionX = stageWidth - 50;
+    }
+    if (positionX <= 0) {
+      positionX = 0;
+    }
+
+    if (hero.isFiring) {
+      this.handleFire();
     }
 
     this.setState({
       hero: {
         ...this.state.hero,
-        positionX: newPositionX
+        movingDirection: hero.movingDirection,
+        positionX
       }
     });
   };
@@ -170,16 +178,7 @@ export default class Homepage extends React.Component {
       >
         <Stage width={stageWidth} height={stageHeight}>
           <Layer>
-            {hero && (
-              <Hero
-                key={hero.Id}
-                hero={hero}
-                stageWidth={stageWidth}
-                stageHeight={stageHeight}
-                handleFire={this.handleFire}
-                handleMove={this.handleMoveHero}
-              />
-            )}
+            {hero && <Hero hero={hero} updateHero={this.handleUpdateHero} />}
             {villians &&
               villians.length > 0 &&
               villians.map(villian => (
