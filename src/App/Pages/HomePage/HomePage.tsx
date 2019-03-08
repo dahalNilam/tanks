@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Stage, Layer } from "react-konva";
 import Villian from "Src/App/Components/Villian/Villian";
-import Bullet from "Src/App/Components/CanvasElements/Bullet";
+import Bullet from "Src/App/Components/Bullet/Bullet";
 import { IHero } from "Src/App/Interfaces/IHero";
 import { IVillian } from "Src/App/Interfaces/IVillian";
 import getUniqueId from "Src/App/Utilities/Utilities";
@@ -20,15 +20,6 @@ interface IState {
 export default class Homepage extends React.Component {
   private backGroundRef = React.createRef<HTMLDivElement>();
 
-  public componentDidMount() {
-    window.addEventListener("resize", this.initializeGame);
-    this.initializeGame();
-  }
-
-  public componentWillUnmount() {
-    window.removeEventListener("resize", this.initializeGame);
-  }
-
   public readonly state: IState = {
     stageWidth: 500,
     stageHeight: 500,
@@ -42,9 +33,14 @@ export default class Homepage extends React.Component {
     villians: []
   };
 
-  private initializeGame = () => {
+  public componentDidMount() {
+    window.addEventListener("resize", this.initializeStage);
     this.initializeStage();
-  };
+  }
+
+  public componentWillUnmount() {
+    window.removeEventListener("resize", this.initializeStage);
+  }
 
   private initializeStage = () => {
     const backGroundNode = this.backGroundRef.current;
@@ -69,14 +65,10 @@ export default class Homepage extends React.Component {
   };
 
   private initializeHero = () => {
-    const { stageWidth, stageHeight } = this.state;
-    const positionX = stageWidth / 2 - 25;
-    const positionY = stageHeight - 60;
-
     const hero: IHero = {
       Id: getUniqueId("hero"),
-      positionY,
-      positionX,
+      positionX: this.state.stageWidth / 2 - 25,
+      positionY: this.state.stageHeight - 60,
       movingDirection: Direction.None
     };
 
@@ -86,45 +78,61 @@ export default class Homepage extends React.Component {
   };
 
   private initializeVillians = () => {
-    const { stageWidth } = this.state;
-
-    const positionX = stageWidth / 2 - 25;
-    const positionY = 10;
-
     const villian: IVillian = {
-      positionY,
-      positionX,
-      Id: getUniqueId("villian")
+      positionY: 10,
+      positionX: this.state.stageWidth / 2 - 25,
+      Id: getUniqueId("villian"),
+      movingDirection: Direction.Right
     };
 
-    const villians: IVillian[] = [villian];
+    this.setState({
+      villians: [villian]
+    });
+  };
+
+  private handleRemoveBulletById = (id: string) => {
+    const bullets = this.state.bullets.filter(p => p.Id !== id);
+
+    this.setState({
+      bullets
+    });
+  };
+
+  private handleUpdateVillian = (villian: IVillian) => {
+    if (villian.movingDirection === Direction.Left) {
+      villian.positionX -= 3;
+    } else {
+      villian.positionX += 3;
+    }
+
+    if (villian.positionX >= this.state.stageWidth - 50) {
+      villian.movingDirection = Direction.Left;
+    }
+    if (villian.positionX <= 0) {
+      villian.movingDirection = Direction.Right;
+    }
+
+    const villians = this.state.villians.map(
+      p => (p.Id === villian.Id ? villian : p)
+    );
 
     this.setState({
       villians
     });
   };
 
-  private handleRemoveBulletById = (id: string) => {
-    const newBullets = this.state.bullets.filter(p => p.Id !== id);
-    this.setState({
-      bullets: newBullets
-    });
-  };
-
-  private handleUpdateVillianPosition = (villian: IBullet) => {};
-
   private handleFire = () => {
     const { positionX, positionY } = this.state.hero;
     const bulletInitialPositionX = positionX + 26;
     const bulletInitialPositionY = positionY - 10;
 
-    const newBullet: IBullet = {
+    const bullet: IBullet = {
       Id: getUniqueId("bullet"),
       positionX: bulletInitialPositionX,
       positionY: bulletInitialPositionY
     };
 
-    const bullets = [...this.state.bullets, newBullet];
+    const bullets = [...this.state.bullets, bullet];
 
     this.setState({
       bullets
@@ -133,21 +141,20 @@ export default class Homepage extends React.Component {
 
   private handleUpdateHero = (hero: IHero) => {
     // Handle Hero Move
-    const { stageWidth } = this.state;
-
     let positionX = hero.positionX;
+
     if (hero.movingDirection === Direction.Right) {
-      positionX += 10;
+      hero.positionX += 10;
     } else if (hero.movingDirection === Direction.Left) {
-      positionX -= 10;
+      hero.positionX -= 10;
     }
 
     // Don't move when the position gets out of range
-    if (positionX >= stageWidth - 50) {
-      positionX = stageWidth - 50;
+    if (positionX >= this.state.stageWidth - 50) {
+      hero.positionX = this.state.stageWidth - 50;
     }
     if (positionX <= 0) {
-      positionX = 0;
+      hero.positionX = 0;
     }
 
     if (hero.isFiring) {
@@ -155,11 +162,7 @@ export default class Homepage extends React.Component {
     }
 
     this.setState({
-      hero: {
-        ...this.state.hero,
-        movingDirection: hero.movingDirection,
-        positionX
-      }
+      hero
     });
   };
 
@@ -185,7 +188,7 @@ export default class Homepage extends React.Component {
                 <Villian
                   key={villian.Id}
                   villian={villian}
-                  updateVillianPosition={this.handleUpdateVillianPosition}
+                  updateVillian={this.handleUpdateVillian}
                 />
               ))}
 

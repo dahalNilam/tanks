@@ -5,7 +5,7 @@ import { IBullet } from "Src/App/Interfaces/IBullet";
 
 interface IProps {
   bullet: IBullet;
-  updateBulletPosition: (bullet: IBullet) => void;
+  removeBulletById: (id: string) => void;
 }
 
 export default class Bullet extends React.Component<IProps> {
@@ -13,47 +13,36 @@ export default class Bullet extends React.Component<IProps> {
   private animation;
 
   public componentDidMount() {
-    const { bullet } = this.props;
-    const { positionX, positionY } = bullet;
+    const { Id, positionY } = this.props.bullet;
 
     this.animation = new Konva.Animation((frame: { time: number }) => {
-      const newBullet: IBullet = {
-        Id: bullet.Id,
-        positionX: bullet.positionX,
-        positionY: bullet.positionY - frame.time / 5
-      };
+      const newPositionY = positionY - frame.time / 5;
 
-      this.props.updateBulletPosition(newBullet);
+      this.circle.setY(newPositionY);
 
-      if (positionY <= 60) {
+      if (newPositionY <= 0) {
+        this.props.removeBulletById(Id);
         this.animation.stop();
       }
-
-      // this.circle.setY(bullet.positionY);
     }, this.circle.getLayer());
 
-    this.startAnimation();
+    this.animation.start();
   }
 
   public componentWillUnmount() {
     this.animation.stop();
   }
 
-  private startAnimation = () => {
-    this.animation.start();
-  };
-
   public render() {
     const { bullet } = this.props;
-    const { positionX, positionY } = bullet;
 
     return (
       <Circle
         ref={node => {
           this.circle = node;
         }}
-        x={positionX}
-        y={positionY}
+        x={bullet.positionX}
+        y={bullet.positionY}
         radius={5}
         fill="red"
       />

@@ -4,34 +4,20 @@ import { IVillian } from "Src/App/Interfaces/IVillian";
 
 interface IProps {
   villian: IVillian;
-  updateVillianPosition: (villain: IVillian) => void;
+  updateVillian: (villain: IVillian) => void;
 }
 
 export default class Villian extends React.Component<IProps> {
   public componentDidMount() {
-    const { villian } = this.props;
-    const { positionX, positionY } = villian;
-
-    this.setState({
-      currentPositionX: positionX,
-      currentPositionY: positionY
-    });
+    requestAnimationFrame(this.tick);
   }
 
-  public componentDidUpdate(oldProps: IProps) {
-    const newProps = this.props;
+  private tick = () => {
+    const { villian, updateVillian } = this.props;
 
-    if (
-      oldProps.villian !== newProps.villian ||
-      oldProps.villian.positionX !== newProps.villian.positionX ||
-      oldProps.villian.positionY !== newProps.villian.positionY
-    ) {
-      this.setState({
-        currentPositionX: newProps.villian.positionX,
-        currentPositionY: newProps.villian.positionY
-      });
-    }
-  }
+    updateVillian(villian);
+    requestAnimationFrame(this.tick);
+  };
 
   public render() {
     const { villian } = this.props;
