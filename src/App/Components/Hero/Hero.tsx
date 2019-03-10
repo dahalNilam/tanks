@@ -25,66 +25,41 @@ export default class Hero extends React.Component<IProps> {
       return;
     }
 
-    const key = event.code;
-    const { hero } = this.props;
-    let { movingDirection, isFiring } = hero;
+    let { hero } = this.props;
+    if (event.code === "ArrowRight") {
+      hero.movingDirection = Direction.Right;
+    }
 
-    switch (key) {
-      case "ArrowRight":
-        movingDirection = Direction.Right;
-        break;
-
-      case "ArrowLeft":
-        movingDirection = Direction.Left;
-        break;
-
-      case "Space":
-        isFiring = true;
-        break;
-
-      default:
+    if (event.code === "ArrowLeft") {
+      hero.movingDirection = Direction.Left;
     }
 
     this.props.updateHero({
-      ...this.props.hero,
-      movingDirection,
-      isFiring
+      ...hero,
+      isFiring: false
     });
   };
 
   private handleKeyUp = (event: KeyboardEvent) => {
     event.preventDefault();
-    if (!event || !event.key) {
+    if (!event || !event.code) {
       return;
     }
 
-    const key = event.code;
-    const { hero } = this.props;
-    let { movingDirection, isFiring } = hero;
+    let { hero } = this.props;
 
-    switch (key) {
-      case "ArrowRight":
-      case "ArrowLeft":
-        movingDirection = Direction.None;
-        break;
-
-      case "Space":
-        isFiring = false;
-        break;
-
-      default:
+    if (event.code === "ArrowRight" || event.code === "ArrowLeft") {
+      hero.movingDirection = Direction.None;
     }
 
     this.props.updateHero({
-      ...this.props.hero,
-      movingDirection,
-      isFiring
+      ...hero,
+      isFiring: event.code === "Space"
     });
   };
 
   public render() {
-    const { hero } = this.props;
-    const { positionX, positionY } = hero;
+    const { positionX, positionY } = this.props.hero;
 
     return (
       <URLImage

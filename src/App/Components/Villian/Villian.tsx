@@ -9,14 +9,14 @@ interface IProps {
 
 export default class Villian extends React.Component<IProps> {
   public componentDidMount() {
-    requestAnimationFrame(this.tick);
+    // requestAnimationFrame(this.tick);
   }
 
   private tick = () => {
     const { villian, updateVillian } = this.props;
 
     updateVillian(villian);
-    requestAnimationFrame(this.tick);
+    // requestAnimationFrame(this.tick);
   };
 
   public render() {

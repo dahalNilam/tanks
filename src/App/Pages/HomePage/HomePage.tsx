@@ -90,6 +90,51 @@ export default class Homepage extends React.Component {
     });
   };
 
+  private handleUpdateBullet = (bullet: IBullet) => {
+    if (bullet.positionY <= 0) {
+      this.handleRemoveBulletById(bullet.Id);
+    }
+
+    const bullets = this.state.bullets.map(
+      b => (b.Id === bullet.Id ? bullet : b)
+    );
+
+    this.setState({
+      bullets
+    });
+
+    const isVillianHit = this.isVillianHit(
+      this.state.villians,
+      this.state.bullets
+    );
+
+    if (isVillianHit) {
+      this.setState({
+        villians: []
+      });
+    }
+  };
+
+  private isVillianHit = (villians: IVillian[], bullets: IBullet[]) => {
+    const bulletsInRange = bullets.filter(b => b.positionY <= 60);
+
+    for (let i = 0; i < villians.length; i++) {
+      const villian = villians[i];
+
+      for (let j = 0; j < bulletsInRange.length; j++) {
+        const bullet = bulletsInRange[j];
+
+        const isHit =
+          bullet.positionX + 10 > villian.positionX &&
+          bullet.positionX < villian.positionX + 50;
+
+        return isHit;
+      }
+    }
+
+    return false;
+  };
+
   private handleRemoveBulletById = (id: string) => {
     const bullets = this.state.bullets.filter(p => p.Id !== id);
 
@@ -198,7 +243,7 @@ export default class Homepage extends React.Component {
                 <Bullet
                   key={bullet.Id}
                   bullet={bullet}
-                  removeBulletById={this.handleRemoveBulletById}
+                  updateBullet={this.handleUpdateBullet}
                 />
               ))}
           </Layer>
