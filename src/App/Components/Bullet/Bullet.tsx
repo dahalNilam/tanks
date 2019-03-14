@@ -9,7 +9,7 @@ interface IProps {
 }
 
 export default class Bullet extends React.Component<IProps> {
-  private circle;
+  private bulletRef;
   private animation;
 
   public componentDidMount() {
@@ -18,13 +18,13 @@ export default class Bullet extends React.Component<IProps> {
     this.animation = new Konva.Animation((frame: { time: number }) => {
       const positionY = bullet.positionY - frame.time / 5;
 
-      this.circle.setY(positionY);
+      this.bulletRef.setY(positionY);
 
       this.props.updateBullet({
         ...this.props.bullet,
         positionY
       });
-    }, this.circle.getLayer());
+    }, this.bulletRef.getLayer());
 
     this.animation.start();
   }
@@ -39,7 +39,7 @@ export default class Bullet extends React.Component<IProps> {
     return (
       <Circle
         ref={node => {
-          this.circle = node;
+          this.bulletRef = node;
         }}
         x={bullet.positionX}
         y={bullet.positionY}

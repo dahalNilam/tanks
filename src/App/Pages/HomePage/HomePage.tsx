@@ -92,7 +92,8 @@ export default class Homepage extends React.Component {
 
   private handleUpdateBullet = (bullet: IBullet) => {
     if (bullet.positionY <= 0) {
-      this.handleRemoveBulletById(bullet.Id);
+      this.removeBulletById(bullet.Id);
+      this.removeBulletById(bullet.Id);
     }
 
     const bullets = this.state.bullets.map(
@@ -103,19 +104,10 @@ export default class Homepage extends React.Component {
       bullets
     });
 
-    const isVillianHit = this.isVillianHit(
-      this.state.villians,
-      this.state.bullets
-    );
-
-    if (isVillianHit) {
-      this.setState({
-        villians: []
-      });
-    }
+    this.removeVillianIfHit(this.state.villians, this.state.bullets);
   };
 
-  private isVillianHit = (villians: IVillian[], bullets: IBullet[]) => {
+  private removeVillianIfHit = (villians: IVillian[], bullets: IBullet[]) => {
     const bulletsInRange = bullets.filter(b => b.positionY <= 60);
 
     for (let i = 0; i < villians.length; i++) {
@@ -128,6 +120,11 @@ export default class Homepage extends React.Component {
           bullet.positionX + 10 > villian.positionX &&
           bullet.positionX < villian.positionX + 50;
 
+        if (isHit) {
+          this.removeVillianById(villian.Id);
+          this.removeBulletById(bullet.Id);
+        }
+
         return isHit;
       }
     }
@@ -135,7 +132,13 @@ export default class Homepage extends React.Component {
     return false;
   };
 
-  private handleRemoveBulletById = (id: string) => {
+  private removeVillianById(id: string) {
+    const villians = this.state.villians.filter(p => p.Id !== id);
+
+    this.setState({ villians });
+  }
+
+  private removeBulletById = (id: string) => {
     const bullets = this.state.bullets.filter(p => p.Id !== id);
 
     this.setState({
