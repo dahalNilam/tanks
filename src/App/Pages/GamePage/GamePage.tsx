@@ -4,7 +4,7 @@ import Villian from "Src/App/Components/Villian/Villian";
 import Bullet from "Src/App/Components/Bullet/Bullet";
 import { IHero } from "Src/App/Interfaces/IHero";
 import { IVillian } from "Src/App/Interfaces/IVillian";
-import getUniqueId from "Src/App/Utilities/Utilities";
+import { getUniqueId } from "Src/App/Utilities/Utilities";
 import { IBullet } from "Src/App/Interfaces/IBullet";
 import Hero from "Src/App/Components/Hero/Hero";
 import { Direction } from "Src/App/Enums/Direction";
@@ -17,7 +17,7 @@ interface IState {
   hero: IHero;
 }
 
-export default class Homepage extends React.Component {
+export default class Gamepage extends React.Component {
   private backGroundRef = React.createRef<HTMLDivElement>();
 
   public readonly state: IState = {

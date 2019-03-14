@@ -1,5 +1,5 @@
 import React from "react";
-import { Homepage } from "App/Pages/HomePage";
+import { GamePage } from "App/Pages/GamePage";
 
 class App extends React.Component {
   render() {
@@ -10,7 +10,7 @@ class App extends React.Component {
         }}
       >
         <h1>Tanks</h1>
-        <Homepage />
+        <GamePage />
       </div>
     );
   }
