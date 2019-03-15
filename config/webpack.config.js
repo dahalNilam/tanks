@@ -67,7 +67,7 @@ module.exports = {
         use: "url-loader?limit=10000&mimetype=application/octet-stream"
       },
       {
-        test: /\.(png|jpg)$/,
+        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         use: "file-loader"
       },
       {
