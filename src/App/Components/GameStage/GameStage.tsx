@@ -10,6 +10,8 @@ import Hero from "Src/App/Components/Hero/Hero";
 import { Direction } from "Src/App/Enums/Direction";
 
 interface IProps {
+  reduceBulletsLeft: () => void;
+  updateBulletsUsed: () => void;
   increaseScore: () => void;
   resetScore: () => void;
   style?: {};
@@ -99,7 +101,7 @@ export default class GameStage extends React.Component<IProps, IState> {
   private handleUpdateBullet = (bullet: IBullet) => {
     if (bullet.positionY <= 0) {
       this.removeBulletById(bullet.Id);
-      this.removeBulletById(bullet.Id);
+      this.props.updateBulletsUsed();
     }
 
     const bullets = this.state.bullets.map(
@@ -130,6 +132,8 @@ export default class GameStage extends React.Component<IProps, IState> {
           this.removeBulletById(bullet.Id);
 
           this.props.increaseScore();
+          this.props.updateBulletsUsed();
+
           this.initializeVillians();
         }
 
@@ -181,6 +185,8 @@ export default class GameStage extends React.Component<IProps, IState> {
     const { positionX, positionY } = this.state.hero;
     const bulletInitialPositionX = positionX + 26;
     const bulletInitialPositionY = positionY - 10;
+
+    this.props.reduceBulletsLeft();
 
     const bullet: IBullet = {
       Id: getUniqueId("bullet"),
