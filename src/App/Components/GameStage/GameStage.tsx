@@ -8,12 +8,11 @@ import { getUniqueId } from "Src/App/Utilities/Utilities";
 import { IBullet } from "Src/App/Interfaces/IBullet";
 import Hero from "Src/App/Components/Hero/Hero";
 import { Direction } from "Src/App/Enums/Direction";
-import { showModalByType } from "../Modals";
-import { ModalTypes } from "../Modals/ModalTypes";
 
 interface IProps {
   increaseScore: () => void;
   resetScore: () => void;
+  style?: {};
 }
 
 interface IState {
@@ -43,7 +42,6 @@ export default class GameStage extends React.Component<IProps, IState> {
   public componentDidMount() {
     window.addEventListener("resize", this.initializeStage);
     this.initializeStage();
-    showModalByType(ModalTypes.SignUp);
   }
 
   public componentWillUnmount() {
@@ -198,21 +196,16 @@ export default class GameStage extends React.Component<IProps, IState> {
   };
 
   private handleUpdateHero = (hero: IHero) => {
-    // Handle Hero Move
-    let positionX = hero.positionX;
-
     if (hero.movingDirection === Direction.Right) {
-      hero.positionX += 10;
-    } else if (hero.movingDirection === Direction.Left) {
-      hero.positionX -= 10;
-    }
+      const maxPosX = this.state.stageWidth - 50;
 
-    // Don't move when the position gets out of range
-    if (positionX >= this.state.stageWidth - 50) {
-      hero.positionX = this.state.stageWidth - 50;
-    }
-    if (positionX <= 0) {
-      hero.positionX = 0;
+      hero.positionX =
+        hero.positionX >= maxPosX ? maxPosX : hero.positionX + 10;
+    } else if (hero.movingDirection === Direction.Left) {
+      const minPosX = 0;
+
+      hero.positionX =
+        hero.positionX <= minPosX ? minPosX : hero.positionX - 10;
     }
 
     if (hero.isFiring) {
@@ -228,15 +221,7 @@ export default class GameStage extends React.Component<IProps, IState> {
     const { stageWidth, stageHeight, villians, hero, bullets } = this.state;
 
     return (
-      <div
-        style={{
-          textAlign: "center",
-          margin: "auto",
-          width: "50%",
-          border: "1px solid grey"
-        }}
-        ref={this.backGroundRef}
-      >
+      <div style={this.props.style} ref={this.backGroundRef}>
         <Stage width={stageWidth} height={stageHeight}>
           <Layer>
             {hero && <Hero hero={hero} updateHero={this.handleUpdateHero} />}

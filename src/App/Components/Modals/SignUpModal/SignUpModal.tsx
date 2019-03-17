@@ -72,7 +72,7 @@ export default class SignUpModal extends React.Component<IProps, IState>
     const { isOpen, name } = this.state;
 
     return (
-      <Modal isOpen={isOpen} toggle={this.close}>
+      <Modal isOpen={isOpen}>
         <ModalHeader>Enter Name</ModalHeader>
 
         <ModalBody>
@@ -83,7 +83,6 @@ export default class SignUpModal extends React.Component<IProps, IState>
               </Label>
               <Col sm={8} md={8} lg={8}>
                 <Input
-                  autoFocus
                   onChange={this.handleNameChange}
                   type="text"
                   name="description"
@@ -99,9 +98,6 @@ export default class SignUpModal extends React.Component<IProps, IState>
           <Button color="primary" onClick={this.handleSubmitForm}>
             Submit
           </Button>{" "}
-          <Button color="secondary" onClick={this.close}>
-            Cancel
-          </Button>
         </ModalFooter>
       </Modal>
     );
