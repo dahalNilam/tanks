@@ -3,6 +3,9 @@ import GameStage from "Src/App/Components/GameStage/GameStage";
 import { SignUpModal } from "Src/App/Components/Modals/SignUpModal";
 import { registerModal, showModalByType } from "Src/App/Components/Modals";
 import { ModalTypes } from "Src/App/Components/Modals/ModalTypes";
+import BulletStock from "Src/App/Components/BulletStock/BulletStock";
+import ScoreBoard from "Src/App/Components/ScoreBoard/ScoreBoard";
+import RestartGame from "Src/App/Components/Modals/RestartGameModal/RestartGameModal";
 
 interface IState {
   playerName: string;
@@ -23,8 +26,16 @@ export default class Gamepage extends React.Component<{}, IState> {
     showModalByType(ModalTypes.SignUp);
   }
 
+  private showRestartModal = () => {
+    showModalByType(ModalTypes.RestartGame);
+  };
+
   private handleSubmitPlayerName = (playerName: string) => {
     this.setState({ playerName });
+  };
+
+  private handleRestartGame = () => {
+    console.log("Restart");
   };
 
   private handleIncreaseScore = () => {
@@ -42,14 +53,18 @@ export default class Gamepage extends React.Component<{}, IState> {
   };
 
   private handleUpdateBulletsUsed = () => {
-    this.setState({
-      bulletsUsed: this.state.bulletsUsed + 1
-    });
+    this.setState(
+      {
+        bulletsUsed: this.state.bulletsUsed + 1
+      },
+      () => {
+        this.state.bulletsUsed >= 10 && this.showRestartModal();
+      }
+    );
   };
 
   public render() {
     const { playerName, score, bulletsLeft, bulletsUsed } = this.state;
-    const isGameOver = bulletsUsed >= 10;
 
     return (
       <>
@@ -65,35 +80,28 @@ export default class Gamepage extends React.Component<{}, IState> {
               Tanks
             </h1>
 
-            {isGameOver ? (
-              <h1>Game Over</h1>
-            ) : (
-              <div style={{ display: "flex" }}>
-                <div style={{ flex: 2 }}>Bullets Left: {bulletsLeft}</div>
-                <GameStage
-                  style={{
-                    flex: 3,
-                    textAlign: "center",
-                    margin: "auto",
-                    border: "1px solid grey"
-                  }}
-                  resetScore={this.handleResetScore}
-                  increaseScore={this.handleIncreaseScore}
-                  reduceBulletsLeft={this.handleReduceBulletsLeft}
-                  updateBulletsUsed={this.handleUpdateBulletsUsed}
-                />
-                <div style={{ flex: 2 }}>
-                  {" "}
-                  {playerName && (
-                    <h3 style={{ color: "#FFF" }}>
-                      {playerName}: {score}
-                    </h3>
-                  )}
-                </div>
-              </div>
-            )}
+            <div style={{ display: "flex" }}>
+              <BulletStock bulletsLeft={bulletsLeft} />
+
+              <GameStage
+                style={{
+                  flex: 3,
+                  textAlign: "center",
+                  margin: "auto",
+                  border: "1px solid grey"
+                }}
+                bulletsLeft={bulletsLeft}
+                resetScore={this.handleResetScore}
+                increaseScore={this.handleIncreaseScore}
+                reduceBulletsLeft={this.handleReduceBulletsLeft}
+                updateBulletsUsed={this.handleUpdateBulletsUsed}
+              />
+
+              <ScoreBoard playerName={playerName} score={score} />
+            </div>
           </>
         )}
+        <RestartGame submit={this.handleRestartGame} ref={registerModal} />
       </>
     );
   }

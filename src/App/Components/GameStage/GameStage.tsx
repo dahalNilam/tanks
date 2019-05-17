@@ -10,6 +10,7 @@ import Hero from "Src/App/Components/Hero/Hero";
 import { Direction } from "Src/App/Enums/Direction";
 
 interface IProps {
+  bulletsLeft: number;
   reduceBulletsLeft: () => void;
   updateBulletsUsed: () => void;
   increaseScore: () => void;
@@ -214,7 +215,7 @@ export default class GameStage extends React.Component<IProps, IState> {
         hero.positionX <= minPosX ? minPosX : hero.positionX - 10;
     }
 
-    if (hero.isFiring) {
+    if (hero.isFiring && this.props.bulletsLeft > 0) {
       this.handleFire();
     }
 

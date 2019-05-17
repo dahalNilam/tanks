@@ -1,3 +1,4 @@
 export enum ModalTypes {
-  SignUp
+  SignUp,
+  RestartGame
 }

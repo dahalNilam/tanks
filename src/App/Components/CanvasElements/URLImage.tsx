@@ -31,6 +31,7 @@ export default class URLImage extends React.Component<IProps, IState> {
 
   public render() {
     const { height, width, positionX, positionY } = this.props;
+
     return (
       <Image
         image={this.state.image}

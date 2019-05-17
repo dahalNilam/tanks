@@ -95,7 +95,7 @@ export default class SignUpModal extends React.Component<IProps, IState>
         </ModalBody>
 
         <ModalFooter>
-          <Button color="primary" onClick={this.handleSubmitForm}>
+          <Button autoFocus color="primary" onClick={this.handleSubmitForm}>
             Submit
           </Button>{" "}
         </ModalFooter>
