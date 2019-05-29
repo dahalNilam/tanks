@@ -1,6 +1,6 @@
 import React from "react";
 import Konva from "konva";
-import { Circle } from "react-konva";
+import { Line } from "react-konva";
 import { IBullet } from "Src/App/Interfaces/IBullet";
 
 interface IProps {
@@ -37,14 +37,19 @@ export default class Bullet extends React.Component<IProps> {
     const { bullet } = this.props;
 
     return (
-      <Circle
+      <Line
         ref={node => {
           this.bulletRef = node;
         }}
         x={bullet.positionX}
         y={bullet.positionY}
-        radius={5}
-        fill="red"
+        points={[3, -15, 6, 0, 0, 0]}
+        tension={0.5}
+        closed
+        stroke="black"
+        fillLinearGradientStartPoint={{ x: -50, y: -50 }}
+        fillLinearGradientEndPoint={{ x: 50, y: 50 }}
+        fillLinearGradientColorStops={[0, "red", 1, "yellow"]}
       />
     );
   }
